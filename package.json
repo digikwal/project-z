@@ -1,0 +1,25 @@
+{
+    "name": "project-z",
+    "description": "Semantic release for project zomboid server.",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/digikwal/project-z.git"
+    },
+    "scripts": {
+      "test": "echo \"No tests defined\" && exit 0"
+    },
+    "dependencies": {
+      "semantic-release": "^24.2.3"
+    },
+    "release": {
+      "branches": [
+        "main",
+        "dev"
+      ],
+      "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/github"
+      ]
+    }
+  }
