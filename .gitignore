@@ -1,3 +1,14 @@
+# Never commit secrets
+.secrets
+
+# data/.gitignore
+data/*
+!data/.gitkeep
+
+# workshop-mods/.gitignore
+workshop-mods/*
+!workshop-mods/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
