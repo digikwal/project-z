@@ -1,0 +1,44 @@
+name: Semantic release
+
+on:
+  workflow_run:
+    workflows:
+      - Pre-commit checks
+    types:
+      - completed
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+  
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run semantic release
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          tag_format: "${version}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save release metadata
+        run: |
+          echo "RELEASE_BRANCH=${{ vars.RELEASE_BRANCH || 'main' }}" >> $GITHUB_ENV
+          echo "${{ env.RELEASE_VERSION }}" > release_tag.txt
+          echo "${{ env.RELEASE_BRANCH }}" > release_branch.txt
+
+      - name: Upload release metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-metadata
+          path: |
+            release_tag.txt
+            release_branch.txt
