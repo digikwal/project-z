@@ -1,0 +1,19 @@
+{
+    "workflow": "Pre-commit checks",
+    "action": "completed",
+    "workflow_run": {
+      "conclusion": "success",
+      "status": "completed"
+    },
+    "repository": {
+      "full_name": "digikwal/project-z",
+      "name": "project-z",
+      "owner": {
+        "login": "digikwal"
+      }
+    },
+    "sender": {
+      "login": "digikwal"
+    }
+  }
+  
