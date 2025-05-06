@@ -1,0 +1,5 @@
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+--pull=false
+--container-daemon-socket /var/run/docker.sock
+--secret-file .secrets
+--workflows .github/workflows
