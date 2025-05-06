@@ -1,0 +1,23 @@
+{
+    "workflow": "Semantic Release",
+    "action": "completed",
+    "workflow_run": {
+        "conclusion": "success",
+        "status": "completed",
+        "id": 123456789
+    },
+    "repository": {
+        "full_name": "digikwal/project-z",
+        "name": "project-z",
+        "owner": {
+            "login": "digikwal"
+        }
+    },
+    "sender": {
+        "login": "digikwal"
+    },
+    "artifacts": {
+        "release_tag": "v1.0.0",
+        "release_branch": "main"
+    }
+}
