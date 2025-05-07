@@ -36,6 +36,8 @@
         && ln -s "${STEAM_DIR}/linux64/steamclient.so" "/usr/lib/x86_64-linux-gnu/steamclient.so" \
         && chown -R "${USER}:${USER}" "${HOME_DIR}/.steam" "${STEAM_DIR}" \
         && rm -rf /var/lib/apt/lists/*
+
+    
     
     #----------------------------------------
     # Base Builder Stage
@@ -52,11 +54,18 @@
     ENV HOME=${HOME_DIR}
     ENV SERVER_SETTINGS="${HOME}/update_pzserver.txt"
     WORKDIR ${HOME}
+
+    # Create the server directory and set permissions as root
+    RUN mkdir -p "${SERVER_DIR}" && \
+        chown -R ${USER}:${USER} "${SERVER_DIR}"
+    
+    # Switch to the non-root user
+    USER ${USER}
     
     # Server configuration
     COPY Zomboid $HOME/Zomboid
-    RUN mkdir -p "${SERVER_DIR}" && \
-        chown -R ${USER}:${USER} "${SERVER_DIR}" "${HOME}/Zomboid" && \
+    RUN mkdir -p "${HOME}/Zomboid" && \
+        chown -R ${USER}:${USER} "${HOME}/Zomboid" && \
         chmod +x "${STEAM_DIR}/start-server.sh"
     
     # Add update_pzserver.txt and install the Zomboid server
@@ -75,4 +84,5 @@
     EXPOSE 16262/udp
     
     # Default startup command
+    ENV SERVER_NAME="default"
     CMD bash /opt/pzserver/start-server.sh -servername "${SERVER_NAME}"
