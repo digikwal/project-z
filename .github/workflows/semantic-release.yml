@@ -3,7 +3,7 @@ name: Semantic release
 on:
   workflow_run:
     workflows:
-      - Pre-commit checks
+      - Pre-commit
     types:
       - completed
 
@@ -21,20 +21,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run semantic release
+      - name: Generate release notes and version
         id: semantic_release
-        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_TAG=$(npx semantic-release | tee /dev/stderr | grep -oP '(?<=next release version is )[^ ]+')
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
 
       - name: Save release metadata
         run: |
-          RELEASE_TAG=$(npx semantic-release --dry-run | grep -oP '(?<=The next release version is )\S+')
-          if [[ -z "$RELEASE_TAG" ]]; then
+          # Save metadata to files
+          if [[ -z "${RELEASE_TAG}" ]]; then
             echo "Error: RELEASE_TAG is empty!" >&2
             exit 1
           fi
-          echo "$RELEASE_TAG" > release_tag.txt
+          echo "${RELEASE_TAG}" > release_tag.txt
 
       - name: Upload release metadata
         uses: actions/upload-artifact@v4
