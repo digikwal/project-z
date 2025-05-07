@@ -16,35 +16,33 @@
     ENV PATH="${PATH}:/usr/games"
     ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
     
-    RUN set -x \
-        && apt-get update \
-        && apt-get install -y --no-install-recommends --no-install-suggests \
+    RUN set -x && \
+        apt-get update && \
+        apt-get install -y --no-install-recommends --no-install-suggests && \
             lib32stdc++6 \
             lib32gcc-s1 \
             ca-certificates \
             curl \
             locales \
             nano \
-        && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
-        && dpkg-reconfigure --frontend=noninteractive locales \
-        && useradd -u "${PUID}" -m "${USER}" \
-        && mkdir -p "${STEAM_DIR}" \
-        && curl -sqL "${STEAM_URL}" | tar zxvf - -C "${STEAM_DIR}" \
-        && mkdir -p "${HOME}/.steam/sdk32" "${HOME}/.steam/sdk64" \
-        && ln -s "${STEAM_DIR}/linux32/steamclient.so" "${HOME}/.steam/sdk32/steamclient.so" \
-        && ln -s "${STEAM_DIR}/linux64/steamclient.so" "${HOME}/.steam/sdk64/steamclient.so" \
-        && ln -s "${STEAM_DIR}/linux64/steamclient.so" "/usr/lib/x86_64-linux-gnu/steamclient.so" \
-        && chown -R "${USER}:${USER}" "${HOME}/.steam" "${STEAM_DIR}" \
-        && rm -rf /var/lib/apt/lists/*
+        sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+        dpkg-reconfigure --frontend=noninteractive locales && \
+        useradd -u "${PUID}" -m "${USER}" && \
+        mkdir -p "${STEAM_DIR}" && \
+        curl -sqL "${STEAM_URL}" | tar zxvf - -C "${STEAM_DIR}" && \
+        mkdir -p "${HOME}/.steam/sdk32" "${HOME}/.steam/sdk64" && \
+        ln -s "${STEAM_DIR}/linux32/steamclient.so" "${HOME}/.steam/sdk32/steamclient.so" && \
+        ln -s "${STEAM_DIR}/linux64/steamclient.so" "${HOME}/.steam/sdk64/steamclient.so" && \
+        ln -s "${STEAM_DIR}/linux64/steamclient.so" "/usr/lib/x86_64-linux-gnu/steamclient.so" && \
+        chown -R "${USER}:${USER}" "${HOME}/.steam" "${STEAM_DIR}" && \
+        rm -rf /var/lib/apt/lists/*
 
-    
-    
     #----------------------------------------
     # Base Builder Stage
     #----------------------------------------
     FROM build-stage AS base-builder
     WORKDIR ${STEAM_DIR}
-    
+
     #----------------------------------------
     # Final Stage: Add Project Zomboid
     #----------------------------------------
@@ -58,29 +56,27 @@
     # Create the server directory and set permissions as root
     RUN mkdir -p "${SERVER_DIR}" && \
         chown -R ${USER}:${USER} "${SERVER_DIR}"
+
+    # Server configuration
+    COPY Zomboid $HOME/Zomboid
+    RUN chown -R ${USER}:${USER} "${HOME}/Zomboid"
     
     # Switch to the non-root user
     USER ${USER}
     
-    # Server configuration
-    COPY Zomboid $HOME/Zomboid
-    RUN chown -R ${USER}:${USER} "${HOME}/Zomboid" && \
-        chmod +x "${STEAM_DIR}/start-server.sh"
-    
     # Add update_pzserver.txt and install the Zomboid server
     RUN mkdir -p $HOME/.steam && \
-    echo "@ShutdownOnFailedCommand 1" > ${SERVER_SETTINGS} && \
-    echo "@NoPromptForPassword 1" >> ${SERVER_SETTINGS} && \
-    echo "force_install_dir /opt/pzserver" >> ${SERVER_SETTINGS} && \
-    echo "login anonymous" >> ${SERVER_SETTINGS} && \
-    echo "app_update 380870 validate" >> ${SERVER_SETTINGS} && \
-    echo "quit" >> ${SERVER_SETTINGS}
-    
-    RUN bash $HOME/steam/steamcmd.sh +runscript ${SERVER_SETTINGS}
+        echo "@ShutdownOnFailedCommand 1" > ${SERVER_SETTINGS} && \
+        echo "@NoPromptForPassword 1" >> ${SERVER_SETTINGS} && \
+        echo "force_install_dir /opt/pzserver" >> ${SERVER_SETTINGS} && \
+        echo "login anonymous" >> ${SERVER_SETTINGS} && \
+        echo "app_update 380870 validate" >> ${SERVER_SETTINGS} && \
+        echo "quit" >> ${SERVER_SETTINGS} && \
+        bash $HOME/steam/steamcmd.sh +runscript ${SERVER_SETTINGS}
     
     # Expose required ports for Project Zomboid
     EXPOSE 16261/udp
     EXPOSE 16262/udp
     
     # Default startup command
-    CMD bash /opt/pzserver/start-server.sh -servername "${SERVER_NAME}"
+    CMD bash "${SERVER_DIR}"/start-server.sh -servername "${SERVER_NAME}"
