@@ -10,8 +10,8 @@
     
     ENV USER=pzuser
     ENV DEBIAN_FRONTEND=noninteractive
-    ENV HOME_DIR="/home/${USER}"
-    ENV STEAM_DIR="${HOME_DIR}/steam"
+    ENV HOME="/home/${USER}"
+    ENV STEAM_DIR="${HOME}/steam"
     ENV SERVER_DIR="/opt/pzserver"
     ENV PATH="${PATH}:/usr/games"
     ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
@@ -30,11 +30,11 @@
         && useradd -u "${PUID}" -m "${USER}" \
         && mkdir -p "${STEAM_DIR}" \
         && curl -sqL "${STEAM_URL}" | tar zxvf - -C "${STEAM_DIR}" \
-        && mkdir -p "${HOME_DIR}/.steam/sdk32" "${HOME_DIR}/.steam/sdk64" \
-        && ln -s "${STEAM_DIR}/linux32/steamclient.so" "${HOME_DIR}/.steam/sdk32/steamclient.so" \
-        && ln -s "${STEAM_DIR}/linux64/steamclient.so" "${HOME_DIR}/.steam/sdk64/steamclient.so" \
+        && mkdir -p "${HOME}/.steam/sdk32" "${HOME}/.steam/sdk64" \
+        && ln -s "${STEAM_DIR}/linux32/steamclient.so" "${HOME}/.steam/sdk32/steamclient.so" \
+        && ln -s "${STEAM_DIR}/linux64/steamclient.so" "${HOME}/.steam/sdk64/steamclient.so" \
         && ln -s "${STEAM_DIR}/linux64/steamclient.so" "/usr/lib/x86_64-linux-gnu/steamclient.so" \
-        && chown -R "${USER}:${USER}" "${HOME_DIR}/.steam" "${STEAM_DIR}" \
+        && chown -R "${USER}:${USER}" "${HOME}/.steam" "${STEAM_DIR}" \
         && rm -rf /var/lib/apt/lists/*
 
     
@@ -50,9 +50,9 @@
     #----------------------------------------
     FROM base-builder AS steamcmd-base
     
-    USER ${USER}
-    ENV HOME=${HOME_DIR}
+    ENV SERVER_NAME="default"
     ENV SERVER_SETTINGS="${HOME}/update_pzserver.txt"
+
     WORKDIR ${HOME}
 
     # Create the server directory and set permissions as root
@@ -64,8 +64,7 @@
     
     # Server configuration
     COPY Zomboid $HOME/Zomboid
-    RUN mkdir -p "${HOME}/Zomboid" && \
-        chown -R ${USER}:${USER} "${HOME}/Zomboid" && \
+    RUN chown -R ${USER}:${USER} "${HOME}/Zomboid" && \
         chmod +x "${STEAM_DIR}/start-server.sh"
     
     # Add update_pzserver.txt and install the Zomboid server
@@ -84,5 +83,4 @@
     EXPOSE 16262/udp
     
     # Default startup command
-    ENV SERVER_NAME="default"
     CMD bash /opt/pzserver/start-server.sh -servername "${SERVER_NAME}"
