@@ -3,12 +3,12 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
 
   - package-ecosystem: docker
     directory: docker/
     schedule:
-      interval: daily
+      interval: weekly
 
   # - package-ecosystem: docker
   #   directory: images/production
@@ -23,4 +23,4 @@ updates:
   - package-ecosystem: pip
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
