@@ -5,7 +5,7 @@
 
     LABEL maintainer="digikwal"
     
-    ARG PUID=1000
+    ARG PUID=2000
     RUN if [ -z "${PUID}" ]; then echo "Error: PUID is not set!" && exit 1; fi
     
     ENV USER=pzuser
@@ -21,11 +21,13 @@
     RUN set -x && \
         apt-get update && \
         apt-get install -y --no-install-recommends --no-install-suggests \
+            openjdk-11-jre-headless \
             lib32stdc++6 \
             lib32gcc-s1 \
             ca-certificates \
             curl \
             locales \
+            tmux \
             nano && \
         sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
         dpkg-reconfigure --frontend=noninteractive locales && \
