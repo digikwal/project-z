@@ -47,6 +47,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --build-arg PUID=2802 \
             --tag digikwal/project-z:${{ env.RELEASE_TAG }} \
             --file docker/Dockerfile .
 
