@@ -13,7 +13,9 @@
     ENV HOME="/home/${USER}"
     ENV STEAM_DIR="${HOME}/steam"
     ENV SERVER_DIR="/opt/pzserver"
+    ENV SERVER_NAME="default"
     ENV PATH="${PATH}:/usr/games"
+    ENV PZSERVER="${HOME}/Zomboid/pzserver.txt"
     ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
     
     RUN set -x && \
@@ -47,9 +49,6 @@
     # Final Stage: Add Project Zomboid
     #----------------------------------------
     FROM base-builder AS steamcmd-base
-    
-    ENV SERVER_NAME="default"
-    ENV SERVER_SETTINGS="${HOME}/update_pzserver.txt"
 
     WORKDIR ${HOME}
 
@@ -60,23 +59,22 @@
     # Server configuration
     COPY Zomboid $HOME/Zomboid
     RUN chown -R ${USER}:${USER} "${HOME}/Zomboid"
+
+    # Run SteamCMD install as root (ensure permissions are OK first)
+    RUN bash $HOME/steam/steamcmd.sh +runscript ${PZSERVER} && \
+        chown -R ${USER}:${USER} ${SERVER_DIR}
+
+    # Copy entrypoint and make it executable
+    COPY docker/entrypoint.sh /entrypoint.sh
+    RUN chmod +x /entrypoint.sh
     
     # Switch to the non-root user
     USER ${USER}
-    
-    # Add update_pzserver.txt and install the Zomboid server
-    RUN mkdir -p $HOME/.steam && \
-        echo "@ShutdownOnFailedCommand 1" > ${SERVER_SETTINGS} && \
-        echo "@NoPromptForPassword 1" >> ${SERVER_SETTINGS} && \
-        echo "force_install_dir /opt/pzserver" >> ${SERVER_SETTINGS} && \
-        echo "login anonymous" >> ${SERVER_SETTINGS} && \
-        echo "app_update 380870 validate" >> ${SERVER_SETTINGS} && \
-        echo "quit" >> ${SERVER_SETTINGS} && \
-        bash $HOME/steam/steamcmd.sh +runscript ${SERVER_SETTINGS}
-    
+
+    # Set entrypoint
+    ENTRYPOINT ["/entrypoint.sh"]
+
     # Expose required ports for Project Zomboid
     EXPOSE 16261/udp
     EXPOSE 16262/udp
-    
-    # Default startup command
-    CMD bash "${SERVER_DIR}"/start-server.sh -servername "${SERVER_NAME}"
+    EXPOSE 27015/tcp
