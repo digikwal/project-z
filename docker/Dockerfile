@@ -18,13 +18,13 @@
     
     RUN set -x && \
         apt-get update && \
-        apt-get install -y --no-install-recommends --no-install-suggests && \
+        apt-get install -y --no-install-recommends --no-install-suggests \
             lib32stdc++6 \
             lib32gcc-s1 \
             ca-certificates \
             curl \
             locales \
-            nano \
+            nano && \
         sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
         dpkg-reconfigure --frontend=noninteractive locales && \
         useradd -u "${PUID}" -m "${USER}" && \
