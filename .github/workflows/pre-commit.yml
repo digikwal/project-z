@@ -15,8 +15,8 @@ on:
       - develop
     paths:
       - 'docker/**'
+      - '.github/workflows/**'
       - 'Zomboid/**'
-
 
 jobs:
   pre-commit:
