@@ -10,7 +10,7 @@
     ENV HOME_DIR="/home/${USER}"
     ENV STEAM_DIR="${HOME_DIR}/steam"
     ENV SERVER_DIR="/opt/pzserver"
-    ENV PATH="$PATH:/usr/games"
+    ENV PATH="${PATH}:/usr/games"
     ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
     
     RUN set -x \
@@ -47,26 +47,25 @@
     
     USER ${USER}
     ENV HOME=${HOME_DIR}
+    ENV SERVER_SETTINGS="${HOME}/update_pzserver.txt"
     WORKDIR ${HOME}
     
     # Server configuration
     COPY Zomboid $HOME/Zomboid
     RUN mkdir -p "${SERVER_DIR}" && \
-        chown -R ${USER}:${USER} "${SERVER_DIR}" "$HOME/Zomboid" && \
-        chmod +x "$STEAM_DIR/start-server.sh"
+        chown -R ${USER}:${USER} "${SERVER_DIR}" "${HOME}/Zomboid" && \
+        chmod +x "${STEAM_DIR}/start-server.sh"
     
     # Add update_pzserver.txt and install the Zomboid server
     RUN mkdir -p $HOME/.steam && \
-        cat << 'EOL' > $HOME/update_pzserver.txt
-    @ShutdownOnFailedCommand 1
-    @NoPromptForPassword 1
-    force_install_dir /opt/pzserver
-    login anonymous
-    app_update 380870 validate
-    quit
-    EOL
+    echo "@ShutdownOnFailedCommand 1" > ${SERVER_SETTINGS} && \
+    echo "@NoPromptForPassword 1" >> ${SERVER_SETTINGS} && \
+    echo "force_install_dir /opt/pzserver" >> ${SERVER_SETTINGS} && \
+    echo "login anonymous" >> ${SERVER_SETTINGS} && \
+    echo "app_update 380870 validate" >> ${SERVER_SETTINGS} && \
+    echo "quit" >> ${SERVER_SETTINGS}
     
-    RUN bash $HOME/steam/steamcmd.sh +runscript $HOME/update_pzserver.txt
+    RUN bash $HOME/steam/steamcmd.sh +runscript ${SERVER_SETTINGS}
     
     # Expose required ports for Project Zomboid
     EXPOSE 16261/udp
