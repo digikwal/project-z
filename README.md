@@ -1,3 +1,11 @@
+![Docker Build and Push](https://github.com/digikwal/project-z/actions/workflows/docker-build.yml/badge.svg)
+![License](https://img.shields.io/github/license/digikwal/project-z)
+![Issues](https://img.shields.io/github/issues/digikwal/project-z)
+
+![Image Size](https://img.shields.io/docker/image-size/digikwal/project-z/latest)
+![Version](https://img.shields.io/github/v/release/digikwal/project-z)
+![Docker Pulls](https://img.shields.io/docker/pulls/digikwal/project-z)
+
 ## Project-Z
 
 Project-Z is a Dockerized Project Zomboid server designed for simplicity and efficiency. It includes automated builds, testing, and deployment to Docker Hub, making it easy to host your own Project Zomboid server.
