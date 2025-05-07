@@ -4,9 +4,12 @@
     FROM ubuntu:noble AS build-stage
 
     LABEL maintainer="digikwal"
+    
     ARG PUID=1000
+    RUN if [ -z "${PUID}" ]; then echo "Error: PUID is not set!" && exit 1; fi
     
     ENV USER=pzuser
+    ENV DEBIAN_FRONTEND=noninteractive
     ENV HOME_DIR="/home/${USER}"
     ENV STEAM_DIR="${HOME_DIR}/steam"
     ENV SERVER_DIR="/opt/pzserver"
