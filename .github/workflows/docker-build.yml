@@ -1,9 +1,9 @@
-name: Build and Push Project-Z Docker Image
+name: Build and Push
 
 on:
   workflow_run:
     workflows:
-      - Semantic Release
+      - Semantic release
     types:
       - completed
 
