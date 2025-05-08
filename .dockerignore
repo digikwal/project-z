@@ -1,5 +1,36 @@
-src
+# Ignore source code and documentation
+src/
+docs/
+
+# Ignore configuration and metadata files
+.git/
+.github/
+.gitignore
+.editorconfig
+.pre-commit-config.yaml
+.yamllint
+.actrc
+commit-message-map.json
+
+# Ignore environment and secrets files
+.env
+.secrets
+
+# Ignore build and dependency artifacts
+node_modules/
+dist/
+build/
+*.pyc
+*.pyo
+*.log
+*.lock
+__pycache__/
+
+# Ignore Docker-related files that aren't needed in the image
+docker-compose.yml
+docker-compose.override.yml
+justfile
+
+# Ignore README and license files
 README.md
 LICENSE
-.gitignore
-compose*.yaml
