@@ -8,7 +8,7 @@ on:
     paths:
       - 'docker/**'
       - '.github/workflows/**'
-      - 'Zomboid/**'
+      - 'scripts/**'
   push:
     branches:
       - main
@@ -16,7 +16,7 @@ on:
     paths:
       - 'docker/**'
       - '.github/workflows/**'
-      - 'Zomboid/**'
+      - 'scripts/**'
 
 jobs:
   pre-commit:
