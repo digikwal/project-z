@@ -36,6 +36,7 @@ ENV PZ_CMD="${STEAM_DIR}/steamcmd.sh"
 ENV PZ_MODS="${PZ_HOME}/Mods"
 ENV PZ_SAVES="${PZ_HOME}/Saves"
 ENV PZ_SERVER="${PZ_HOME}/Server"
+ENV PZ_TEMPLATE="${PZ_SERVER}/template.ini"
 ENV PZ_UPDATE="${PZ_HOME}/pzserver.txt"
 ENV PZ_VERSION="41.78.16"
 ENV PATH="${PATH}:/usr/games"
@@ -87,6 +88,7 @@ WORKDIR ${HOME}
 #----------------------------------------
 # Directory Setup and Update Script
 #----------------------------------------
+COPY ../scripts/template.ini ${PZ_TEMPLATE}
 RUN mkdir -p "${INSTALL_DIR}" "${PZ_HOME}" "${PZ_CACHE}" "${PZ_MODS}" "${PZ_SAVES}" "${PZ_SERVER}" && \
     echo '@ShutdownOnFailedCommand 1'        >  "${PZ_UPDATE}" && \
     echo '@NoPromptForPassword 1'            >> "${PZ_UPDATE}" && \
