@@ -38,12 +38,13 @@ docker-compose up -d
 ---
 
 ### Documentation
-For detailed guides and configuration options, visit the docs directory:
+For detailed guides and configuration options, visit the [`docs`](./docs) directory:
 
-- Environment Variables
-- Soft Reset Guide
-- Required Ports
-- Scripts Overview
+- [Environment Variables](./docs/environment-variables.md)
+- [Required Ports](./docs/required-ports.md)
+- [Scripts Overview](./docs/scripts-overview.md)
+- [Soft Reset Guide](./docs/soft-reset.md)
+- [Startup Parameters](./docs/startup-parameters.md)
 
 ### CI/CD Workflows
 This project uses GitHub Actions for CI/CD. Below are the key workflows:
