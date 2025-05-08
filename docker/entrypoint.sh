@@ -14,48 +14,48 @@ fi
 ARGS=()
 
 # Optional arguments
-[[ -n "$SERVER_NAME" ]] && ARGS+=(-servername "${SERVER_NAME}")
-[[ -n "$MIN_RAM" ]] && ARGS+=(-Xms"$MIN_RAM")
-[[ -n "$MAX_RAM" ]] && ARGS+=(-Xmx"$MAX_RAM")
-[[ -n "$ADMIN_USERNAME" ]] && ARGS+=(-adminusername "$ADMIN_USERNAME")
-[[ -n "$ADMIN_PASSWORD" ]] && ARGS+=(-adminpassword "$ADMIN_PASSWORD")
-[[ -n "$BIND_IP" ]] && ARGS+=(-ip "$BIND_IP")
-[[ -n "$DEFAULT_PORT" ]] && ARGS+=(-port "$DEFAULT_PORT")
-[[ -n "$UDP_PORT" ]] && ARGS+=(-udpport "$UDP_PORT")
-[[ "$STEAM_API" = "false" ]] && ARGS+=(-nosteam)
-[[ -n "$STEAM_VAC" ]] && ARGS+=(-steamvac "$STEAM_VAC")
-[[ -n "$CACHE_DIR" ]] && ARGS+=(-cachedir "$CACHE_DIR")
-[[ -n "$STATISTIC" ]] && ARGS+=(-statistic "$STATISTIC")
-[[ -n "$MODFOLDERS" ]] && ARGS+=(-modfolders "$MODFOLDERS")
-[[ -n "$DEBUG_LOG" ]] && ARGS+=(-debuglog="$DEBUG_LOG")
-[[ "$DEBUG" = "true" ]] && ARGS+=(-debug)
-[[ "$SOFTRESET" = "true" ]] && ARGS+=(-Dsoftreset)
-[[ "$COOP" = "true" ]] && ARGS+=(-coop)
+[[ -n "${SERVER_NAME}" ]] && ARGS+=(-servername "${SERVER_NAME}")
+[[ -n "${MIN_RAM}" ]] && ARGS+=(-Xms"${MIN_RAM}")
+[[ -n "${MAX_RAM}" ]] && ARGS+=(-Xmx"${MAX_RAM}")
+[[ -n "${ADMIN_USERNAME}" ]] && ARGS+=(-adminusername "${ADMIN_USERNAME}")
+[[ -n "${ADMIN_PASSWORD}" ]] && ARGS+=(-adminpassword "${ADMIN_PASSWORD}")
+[[ -n "${BIND_IP}" ]] && ARGS+=(-ip "${BIND_IP}")
+[[ -n "${DEFAULT_PORT}" ]] && ARGS+=(-port "${DEFAULT_PORT}")
+[[ -n "${UDP_PORT}" ]] && ARGS+=(-udpport "${UDP_PORT}")
+[[ "${STEAM_API}" = "false" ]] && ARGS+=(-nosteam)
+[[ -n "${STEAM_VAC}" ]] && ARGS+=(-steamvac "${STEAM_VAC}")
+[[ -n "${CACHE_DIR}" ]] && ARGS+=(-cachedir "${CACHE_DIR}")
+[[ -n "${STATISTIC}" ]] && ARGS+=(-statistic "${STATISTIC}")
+[[ -n "${MODFOLDERS}" ]] && ARGS+=(-modfolders "${MODFOLDERS}")
+[[ -n "${DEBUG_LOG}" ]] && ARGS+=(-debuglog="${DEBUG_LOG}")
+[[ "${DEBUG}" = "true" ]] && ARGS+=(-debug)
+[[ "${SOFTRESET}" = "true" ]] && ARGS+=(-Dsoftreset)
+[[ "${COOP}" = "true" ]] && ARGS+=(-coop)
 
 # Server preset handling
-if [[ -n "$SERVER_PRESET" ]]; then
+if [[ -n "${SERVER_PRESET}" ]]; then
   SETUP_INI="${PZ_TEMPLATE}"
   SETUP_PRESET="${INSTALL_DIR}/media/lua/shared/Sandbox/${SERVER_PRESET}.lua"
   INSTALL_INI="${PZ_SERVER}/${SERVER_NAME}.ini"
   INSTALL_PRESET="${PZ_SERVER}/${SERVER_NAME}_SandboxVars.lua"
   INSTALL_SPAWN="${PZ_SERVER}/${SERVER_NAME}_spawnregions.lua"
 
-if [[ ! -f "$SETUP_INI" || ! -s "$SETUP_INI" ]]; then
-  echo "Error: $SETUP_INI does not exist or is empty. Please provide a valid server configuration template." >&2
+if [[ ! -f "${SETUP_INI}" || ! -s "${SETUP_INI}" ]]; then
+  echo "Error: ${SETUP_INI} does not exist or is empty. Please provide a valid server configuration template." >&2
   exit 1
 fi
 
-if [[ -f "$SETUP_INI" != "${INSTALL_INI}" ]]; then
-  echo "Renaming $SETUP_INI to ${INSTALL_INI}..."
+if [[ "${SETUP_INI}" != "${INSTALL_INI}" ]]; then
+  echo "Renaming ${SETUP_INI} to ${INSTALL_INI}..."
   mkdir -p "$(dirname "${INSTALL_INI}")"
-  mv "$SETUP_INI" "${INSTALL_INI}"
+  mv "${SETUP_INI}" "${INSTALL_INI}"
   chmod 644 "${INSTALL_INI}"
 fi
 
 if [[ ! -f "${INSTALL_PRESET}" || ! -s "${INSTALL_PRESET}" ]]; then
-  echo "Copying preset file from $SETUP_PRESET to ${INSTALL_PRESET}..."
+  echo "Copying preset file from ${SETUP_PRESET} to ${INSTALL_PRESET}..."
   mkdir -p "$(dirname "${INSTALL_PRESET}")"
-  cp "$SETUP_PRESET" "${INSTALL_PRESET}"
+  cp "${SETUP_PRESET}" "${INSTALL_PRESET}"
   chmod 644 "${INSTALL_PRESET}"
 fi
 
@@ -153,7 +153,7 @@ if [ -n "${DEATH_MSG}" ]; then
 fi
 
 if [ -n "${RCON_PASSWORD}" ]; then
-  MASKED_PASSWORD="${RCON_PASSWORD:0:2}******${RCON_PASSWORD: -2}" # Show first 2 and last 2 characters
+  MASKED_PASSWORD="${RCON_PASSWORD:0:2}******${RCON_PASSWORD: -2}"
   echo "*** INFO: Remote console password set (${MASKED_PASSWORD}) ***"
   sed -i "s/RCONPassword=.*/RCONPassword=${RCON_PASSWORD}/" "${INSTALL_INI}"
 fi
@@ -175,9 +175,9 @@ fi
 # Steam servers require two additional ports to function
 # Must be unique from DefaultPort value
 # Use STEAMPORT1 and STEAMPORT2 variables in your compose file
-[[ -n "$STEAMPORT_1" ]] && ARGS+=(-steamport1 "$STEAMPORT_1")
-[[ -n "$STEAMPORT_2" ]] && ARGS+=(-steamport2 "$STEAMPORT_2")
-[[ -n "$SERVER_PASSWORD" ]] && ARGS+=(+password "$SERVER_PASSWORD")
+[[ -n "${STEAMPORT_1}" ]] && ARGS+=(-steamport1 "${STEAMPORT_1}")
+[[ -n "${STEAMPORT_2}" ]] && ARGS+=(-steamport2 "${STEAMPORT_2}")
+[[ -n "${SERVER_PASSWORD}" ]] && ARGS+=(+password "${SERVER_PASSWORD}")
 
 # Start the server
 exec "${INSTALL_DIR}/start-server.sh" "${ARGS[@]}"
