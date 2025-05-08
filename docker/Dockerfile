@@ -30,15 +30,16 @@ ENV LC_ALL=en_US.UTF-8
 ENV INSTALL_DIR="/opt/pzserver"
 ENV HOME="/home/${USER}"
 ENV PZ_HOME="${HOME}/Zomboid"
-ENV STEAM_DIR="${HOME}/steam"
+ENV STEAM_DIR="${HOME}/Steam"
 ENV PZ_CACHE="${PZ_HOME}/Cache"
+ENV PZ_CMD="${STEAM_DIR}/steamcmd.sh"
 ENV PZ_MODS="${PZ_HOME}/Mods"
 ENV PZ_SAVES="${PZ_HOME}/Saves"
 ENV PZ_SERVER="${PZ_HOME}/Server"
 ENV PZ_UPDATE="${PZ_HOME}/pzserver.txt"
 ENV PZ_VERSION="41.78.16"
 ENV PATH="${PATH}:/usr/games"
-ENV LD_PRELOAD="${INSTALL_DIR}/jre64/lib"
+ENV LD_PRELOAD="${INSTALL_DIR}/jre64/lib/libjsig.so"
 ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
 
 #----------------------------------------
@@ -105,7 +106,7 @@ RUN chmod +x /entrypoint.sh
 # Install Project Zomboid Server
 #----------------------------------------
 USER ${USER}
-RUN ./steam/steamcmd.sh +runscript ${PZ_UPDATE}
+RUN "$PZ_CMD" +runscript "$PZ_UPDATE"
 
 #----------------------------------------
 # Container Entrypoint
