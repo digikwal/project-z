@@ -10,29 +10,51 @@ if [[ ! -f "${INSTALL_DIR}/start-server.sh" ]]; then
   exit 1
 fi
 
+
+#------------------------------
 # Initialize args array
-ARGS=()
+#------------------------------
 
-# Optional arguments
-[[ -n "${SERVER_NAME}" ]] && ARGS+=(-servername "${SERVER_NAME}")
-[[ -n "${MIN_RAM}" ]] && ARGS+=(-Xms"${MIN_RAM}")
-[[ -n "${MAX_RAM}" ]] && ARGS+=(-Xmx"${MAX_RAM}")
-[[ -n "${ADMIN_USERNAME}" ]] && ARGS+=(-adminusername "${ADMIN_USERNAME}")
-[[ -n "${ADMIN_PASSWORD}" ]] && ARGS+=(-adminpassword "${ADMIN_PASSWORD}")
-[[ -n "${BIND_IP}" ]] && ARGS+=(-ip "${BIND_IP}")
-[[ -n "${DEFAULT_PORT}" ]] && ARGS+=(-port "${DEFAULT_PORT}")
-[[ -n "${UDP_PORT}" ]] && ARGS+=(-udpport "${UDP_PORT}")
-[[ "${STEAM_API}" = "false" ]] && ARGS+=(-nosteam)
-[[ -n "${STEAM_VAC}" ]] && ARGS+=(-steamvac "${STEAM_VAC}")
-[[ -n "${CACHE_DIR}" ]] && ARGS+=(-cachedir "${CACHE_DIR}")
-[[ -n "${STATISTIC}" ]] && ARGS+=(-statistic "${STATISTIC}")
-[[ -n "${MODFOLDERS}" ]] && ARGS+=(-modfolders "${MODFOLDERS}")
-[[ -n "${DEBUG_LOG}" ]] && ARGS+=(-debuglog="${DEBUG_LOG}")
-[[ "${DEBUG}" = "true" ]] && ARGS+=(-debug)
-[[ "${SOFTRESET}" = "true" ]] && ARGS+=(-Dsoftreset)
-[[ "${COOP}" = "true" ]] && ARGS+=(-coop)
+JAVA_ARGS=()
+GAME_ARGS=()
 
+
+#------------------------------
+# Java arguments
+#------------------------------
+[[ -n "${MIN_RAM}" ]] && JAVA_ARGS+=(-Xms"${MIN_RAM}")
+[[ -n "${MAX_RAM}" ]] && JAVA_ARGS+=(-Xmx"${MAX_RAM}")
+[[ "${STEAM_API}" = "true" ]] && JAVA_ARGS+=(-Dzomboid.steam=1)
+[[ "${STEAM_API}" = "false" ]] && JAVA_ARGS+=(-Dzomboid.steam=0)
+[[ -n "${CACHE_DIR}" ]] && JAVA_ARGS+=(-Ddeployment.user.cachedir="${CACHE_DIR}")
+[[ "${SOFTRESET}" = "true" ]] && JAVA_ARGS+=(-Dsoftreset)
+[[ "${DEBUG}" = "true" ]] && JAVA_ARGS+=(-Ddebug)
+
+
+#------------------------------
+# Game arguments
+#------------------------------
+[[ -n "${SERVER_NAME}" ]] && GAME_ARGS+=(-servername "${SERVER_NAME}")
+[[ -n "${SERVER_PASSWORD}" ]] && GAME_ARGS+=(+password "${SERVER_PASSWORD}")
+[[ -n "${ADMIN_USERNAME}" ]] && GAME_ARGS+=(-adminusername "${ADMIN_USERNAME}")
+[[ -n "${ADMIN_PASSWORD}" ]] && GAME_ARGS+=(-adminpassword "${ADMIN_PASSWORD}")
+[[ -n "${BIND_IP}" ]] && GAME_ARGS+=(-ip "${BIND_IP}")
+[[ -n "${DEFAULT_PORT}" ]] && GAME_ARGS+=(-port "${DEFAULT_PORT}")
+[[ -n "${UDP_PORT}" ]] && GAME_ARGS+=(-udpport "${UDP_PORT}")
+[[ -n "${STEAM_VAC}" ]] && GAME_ARGS+=(-steamvac "${STEAM_VAC}")
+[[ -n "${STATISTIC}" ]] && GAME_ARGS+=(-statistic "${STATISTIC}")
+[[ -n "${MODFOLDERS}" ]] && GAME_ARGS+=(-modfolders "${MODFOLDERS}")
+[[ -n "${DEBUG_LOG}" ]] && GAME_ARGS+=(-debuglog="${DEBUG_LOG}")
+[[ "${COOP}" = "true" ]] && GAME_ARGS+=(-coop)
+
+# Steam servers require two available ports to function
+[[ -n "${STEAMPORT_1}" ]] && GAME_ARGS+=(-steamport1 "${STEAMPORT_1}")
+[[ -n "${STEAMPORT_2}" ]] && GAME_ARGS+=(-steamport2 "${STEAMPORT_2}")
+
+
+#------------------------------
 # Server preset handling
+#------------------------------
 if [[ -n "${SERVER_PRESET}" ]]; then
   SETUP_INI="${PZ_TEMPLATE}"
   SETUP_PRESET="${INSTALL_DIR}/media/lua/shared/Sandbox/${SERVER_PRESET}.lua"
@@ -76,6 +98,9 @@ EOF
   fi
 fi
 
+#------------------------------
+# Server configuration handling
+#------------------------------
 if [ -n "${MOD_ID}" ]; then
  	echo "*** INFO: Found Mods including ${MOD_ID} ***"
 	sed -i "s/Mods=.*/Mods=${MOD_ID}/" "${INSTALL_INI}"
@@ -173,12 +198,8 @@ if [ -n "${VOIP}" ]; then
   sed -i "s/VoiceEnable=.*/VoiceEnable=${VOIP}/" "${INSTALL_INI}"
 fi
 
-# Steam servers require two additional ports to function
-# Must be unique from DefaultPort value
-# Use STEAMPORT1 and STEAMPORT2 variables in your compose file
-[[ -n "${STEAMPORT_1}" ]] && ARGS+=(-steamport1 "${STEAMPORT_1}")
-[[ -n "${STEAMPORT_2}" ]] && ARGS+=(-steamport2 "${STEAMPORT_2}")
-[[ -n "${SERVER_PASSWORD}" ]] && ARGS+=(+password "${SERVER_PASSWORD}")
 
-# Start the server
-exec "${INSTALL_DIR}/start-server.sh" "${ARGS[@]}"
+#------------------------------
+# Start the server with Java args first, followed by "--" and game args
+#------------------------------
+exec "${INSTALL_DIR}/start-server.sh" "${JAVA_ARGS[@]}" -- "${GAME_ARGS[@]}"
