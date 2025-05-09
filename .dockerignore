@@ -11,6 +11,7 @@ docs/
 .yamllint
 .actrc
 commit-message-map.json
+pre_commit_check.py
 
 # Ignore environment and secrets files
 .env
