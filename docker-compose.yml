@@ -1,6 +1,6 @@
 services:
   project-z:
-    image: "digikwal/project-z:latest"
+    image: "digikwal/project-z:1.0.0"
     env_file:
       - .env
     ports:
