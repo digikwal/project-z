@@ -40,7 +40,6 @@ ENV PZ_TEMPLATE="${PZ_SERVER}/template.ini"
 ENV PZ_UPDATE="${PZ_HOME}/pzserver.txt"
 ENV PZ_VERSION="41.78.16"
 ENV PATH="${PATH}:/usr/games"
-ENV LD_PRELOAD="${INSTALL_DIR}/jre64/lib/libjsig.so"
 ENV STEAM_URL="https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
 
 #----------------------------------------
