@@ -35,15 +35,12 @@ GAME_ARGS=()
 # Game arguments
 #------------------------------
 [[ -n "${SERVER_NAME}" ]] && GAME_ARGS+=(-servername "${SERVER_NAME}")
-[[ -n "${SERVER_PASSWORD}" ]] && GAME_ARGS+=(+password "${SERVER_PASSWORD}")
 [[ -n "${ADMIN_USERNAME}" ]] && GAME_ARGS+=(-adminusername "${ADMIN_USERNAME}")
 [[ -n "${ADMIN_PASSWORD}" ]] && GAME_ARGS+=(-adminpassword "${ADMIN_PASSWORD}")
 [[ -n "${BIND_IP}" ]] && GAME_ARGS+=(-ip "${BIND_IP}")
 [[ -n "${DEFAULT_PORT}" ]] && GAME_ARGS+=(-port "${DEFAULT_PORT}")
 [[ -n "${UDP_PORT}" ]] && GAME_ARGS+=(-udpport "${UDP_PORT}")
 [[ -n "${STEAM_VAC}" ]] && GAME_ARGS+=(-steamvac "${STEAM_VAC}")
-[[ -n "${STATISTIC}" ]] && GAME_ARGS+=(-statistic "${STATISTIC}")
-[[ -n "${MODFOLDERS}" ]] && GAME_ARGS+=(-modfolders "${MODFOLDERS}")
 [[ -n "${DEBUG_LOG}" ]] && GAME_ARGS+=(-debuglog="${DEBUG_LOG}")
 [[ "${COOP}" = "true" ]] && GAME_ARGS+=(-coop)
 
@@ -178,9 +175,20 @@ if [ -n "${DEATH_MSG}" ]; then
   sed -i "s/AnnounceDeath=.*/AnnounceDeath=${DEATH_MSG}/" "${INSTALL_INI}"
 fi
 
+if [ -n "${SERVER_PASSWORD}" ]; then
+  SERVER_MASKED="${SERVER_PASSWORD:0:2}******${SERVER_PASSWORD: -2}"
+  echo "*** INFO: Remote console password set (${SERVER_MASKED}) ***"
+  sed -i "s/RCONPassword=.*/RCONPassword=${SERVER_PASSWORD}/" "${INSTALL_INI}"
+fi
+
+if [ -n "${RCON_PORT}" ]; then
+ 	echo "*** INFO: Remote console port set ${RCON_PORT} ***"
+  sed -i "s/RCONPort=.*/RCONPort=${RCON_PORT}/" "${INSTALL_INI}"
+fi
+
 if [ -n "${RCON_PASSWORD}" ]; then
-  MASKED_PASSWORD="${RCON_PASSWORD:0:2}******${RCON_PASSWORD: -2}"
-  echo "*** INFO: Remote console password set (${MASKED_PASSWORD}) ***"
+  RCON_MASKED="${RCON_PASSWORD:0:2}******${RCON_PASSWORD: -2}"
+  echo "*** INFO: Remote console password set (${RCON_MASKED}) ***"
   sed -i "s/RCONPassword=.*/RCONPassword=${RCON_PASSWORD}/" "${INSTALL_INI}"
 fi
 
