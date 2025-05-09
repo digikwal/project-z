@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "Starting Project Zomboid Server..."
-echo "INSTALL_DIR=${INSTALL_DIR}"
-echo "SERVER_NAME=${SERVER_NAME}"
+export LD_PRELOAD="${INSTALL_DIR}/jre64/lib/libjsig.so"
 
 if [[ ! -f "${INSTALL_DIR}/start-server.sh" ]]; then
   echo "Error: ${INSTALL_DIR}/start-server.sh does not exist!"
   exit 1
 fi
+
+echo "Starting Project Zomboid Server..."
 
 
 #------------------------------
